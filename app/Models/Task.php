@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enums\TaskPriority;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -11,6 +12,10 @@ class Task extends Model
     use HasFactory;
 
     protected $fillable = ['title', 'description', 'due_date', 'status', 'priority', 'category_id'];
+
+    protected $attributes = [
+        'status' => false,
+    ];
 
     protected function casts(): array
     {
@@ -24,5 +29,19 @@ class Task extends Model
     public function category()
     {
         return $this->belongsTo(Category::class);
+    }
+
+    public function scopeSearch(
+        Builder $query,
+        ?string $search
+    ): Builder {
+        return $query->when(
+            filled($search),
+            fn (Builder $query) => $query->where(
+                'title',
+                'like',
+                '%' . trim($search) . '%'
+            )
+        );
     }
 }
