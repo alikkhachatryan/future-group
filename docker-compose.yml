@@ -7,8 +7,9 @@ services:
         restart: unless-stopped
         ports:
             - "8000:8000"
+        volumes:
+            - ./.env:/var/www/html/.env
         environment:
-            APP_KEY: ${APP_KEY}
             APP_ENV: local
             APP_DEBUG: "true"
             APP_URL: http://localhost:8000
